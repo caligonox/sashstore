@@ -16,10 +16,6 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
-
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-&-a1s9d-^np%##4q_izpd$xn36#9)-nsadb43ia(n%p04x)zq!'
 
@@ -28,10 +24,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
-
-# Application definition
-
 INSTALLED_APPS = [
+    #global apps
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -39,6 +33,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    #'allauth',
+    #'allauth.account',
+    #'allauth.socialaccount',
+    #'allauth.socialaccount.providers.github',
+
+    #local apps
     'products',
     'users',
 ]
@@ -51,6 +51,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware'
+    #'allauth.account.middleware.AccountMiddleware',
 ]
 
 ROOT_URLCONF = 'store.urls'
@@ -66,13 +69,23 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                #'products.context_processors.baskets',
+                #'allauth.account.context_processors.account',
+                #'allauth.socialaccount.context_processors.socialaccount',
             ],
         },
     },
 ]
 
-WSGI_APPLICATION = 'store.wsgi.application'
+#CACHES = {
+#    'OPTIONS': {
+#        'libraries': {
+#            'socialaccount': 'path.to.custom.tags.library',
+#        },
+#    },
+#}
 
+#WSGI_APPLICATION = 'store.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
@@ -83,7 +96,6 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
@@ -103,7 +115,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
 
@@ -115,22 +126,38 @@ USE_I18N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
 STATIC_URL = '/static/'
-STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'static'),
-)
+STATIC_ROOT = BASE_DIR / 'static'
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = (BASE_DIR / 'media',)
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+#Users
 AUTH_USER_MODEL = 'users.User'
 LOGIN_URL = '/users/login/'
+
+#SOCIALACCOUNT_PROVIDERS = {
+#    'github': {
+#        'SCOPE': [
+#            'user',
+#        ],
+#    }
+#}
+
+# OAuth
+#AUTHENTICATION_BACKENDS = [
+#    'django.contrib.auth.backends.ModelBackend',
+#    'allauth.account.auth_backends.AuthenticationBackend',
+#]
+#
+#SITE_ID = 1

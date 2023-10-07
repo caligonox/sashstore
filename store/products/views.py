@@ -1,15 +1,15 @@
 from django.shortcuts import render, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
+from django.views.generic.base import TemplateView
 from django.core.paginator import Paginator
 from products.models import ProductCategory, Product, Basket
 
-
-# Create your views here.
+#class IndexView(TemplateView):
+#     pass
 
 def index(request):
      context = {
           'title': 'store',
-
      }
      return render(request, 'products/index.html', context)
 
@@ -23,22 +23,6 @@ def products(request, category_id=None, page=1):
      products_paginator = paginator.page(page)
      context.update({'products': products_paginator})
      return render(request, 'products/products.html', context)
-
-def test_context(request):
-     context = {
-          'title': 'store',
-          'header': 'Добро пожаловать!',
-          'username': 'Иван Иванов',
-          'products': [
-               {'name': 'Худи', 'price': 6000},
-               {'name': 'Куртка', 'price': 3000},
-          ],
-          'provotion': True,
-          'products_of_promotion': [
-               {'name': 'Рюкзак', 'price': 2340},
-          ]
-     }
-     return render(request, 'products/test_context.html', context)
 
 @login_required
 def basket_add(request, product_id ):
