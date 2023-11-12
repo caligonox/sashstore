@@ -10,8 +10,9 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
-import os
 from pathlib import Path
+
+import environ
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -23,24 +24,36 @@ SECRET_KEY = 'django-insecure-&-a1s9d-^np%##4q_izpd$xn36#9)-nsadb43ia(n%p04x)zq!
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
+DOMAIN_NAME = 'http://127.0.0.1:8000'
 
 INSTALLED_APPS = [
-    #global apps
+    # global apps
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
+    'django.contrib.humanize',
+    'django_extensions',
+    'rest_framework',
+    'rest_framework.authtoken',
 
-    #'allauth',
-    #'allauth.account',
-    #'allauth.socialaccount',
-    #'allauth.socialaccount.providers.github',
+    # 'debug_toolbar',
 
-    #local apps
+    # OAuth
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.github',
+
+    # local apps
     'products',
+    'orders',
     'users',
+    'common',
+    'api',
 ]
 
 MIDDLEWARE = [
@@ -51,9 +64,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware'
-    #'allauth.account.middleware.AccountMiddleware',
+    # 'debug_toolbar.middleware.DebugToolbarMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
 ]
 
 ROOT_URLCONF = 'store.urls'
@@ -61,7 +73,7 @@ ROOT_URLCONF = 'store.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -69,37 +81,27 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                #'products.context_processors.baskets',
-                #'allauth.account.context_processors.account',
-                #'allauth.socialaccount.context_processors.socialaccount',
+                'products.context_processors.baskets',
             ],
         },
     },
 ]
 
-#CACHES = {
-#    'OPTIONS': {
-#        'libraries': {
-#            'socialaccount': 'path.to.custom.tags.library',
-#        },
-#    },
-#}
-
-#WSGI_APPLICATION = 'store.wsgi.application'
-
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
-
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'Store',
+        'USER': 'store_admin',
+        'PASSWORD': '58523gfj',
+        'HOST': 'localhost',
+        'PORT': '5432',
+    },
 }
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
-
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -115,9 +117,19 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+WSGI_APPLICATION = 'store.wsgi.application'
+INTERNAL_IPS = ['127.0.0.1', 'localhost',]
+
+# Caching
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379",
+    }
+}
+
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
-
 LANGUAGE_CODE = 'en-ru'
 
 TIME_ZONE = 'Europe/Moscow'
@@ -129,35 +141,68 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
-STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / 'static'
+STATIC_URL = 'static/'
+STATICFILES_DIRS = [BASE_DIR / 'static']
+# STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = (BASE_DIR / 'media',)
+# MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = BASE_DIR / 'media'
 
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-#Users
+# Users
 AUTH_USER_MODEL = 'users.User'
-LOGIN_URL = '/users/login/'
+LOGIN_URL = '/users/login.html'
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
 
-#SOCIALACCOUNT_PROVIDERS = {
-#    'github': {
-#        'SCOPE': [
-#            'user',
-#        ],
-#    }
-#}
+# Sending emails
+EMAIL_HOST = 'smtp.yandex.ru'
+EMAIL_PORT = 465
+EMAIL_HOST_USER = 'storeserverlogin@yandex.ru'
+EMAIL_HOST_PASSWORD = 'zpphkhaynjohwcfr'
+EMAIL_USE_SSL = True
+EMAIL_SERVER = EMAIL_HOST_USER
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+EMAIL_ADMIN = EMAIL_HOST_USER
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 # OAuth
-#AUTHENTICATION_BACKENDS = [
-#    'django.contrib.auth.backends.ModelBackend',
-#    'allauth.account.auth_backends.AuthenticationBackend',
-#]
-#
-#SITE_ID = 1
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
+
+SITE_ID = 2
+
+SOCIALACCOUNT_PROVIDERS = {
+    'github': {
+        'SCOPE': [
+            'user',
+        ],
+    }
+}
+
+# Celery
+CELERY_BROKER_URL = 'redis://127.0.0.1:6379'
+CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379'
+
+# Payment
+STRIPE_PUBLIC_KEY = 'pk_test_51O84rIHCu8e3Xef9RJh1Snc9JKDCNAmcOZW3kWAJZjuuFE6H6BDDxenlm2hiHcGdTxIT5RwlagBXIjcKcCLhMQFW00RUoKeZ2v'
+STRIPE_SECRET_KEY = 'sk_test_51O84rIHCu8e3Xef9W84EAO4dowbLbuYqUnF2WJLX3IVFnblUuoXfcvwaBlplXOEaz57m20mxKc6Nne7h08WF7aLl00LnaoN2oS'
+STRIPE_WEBHOOK_SECRET = 'whsec_524c9d01c4f19e91910d414f9140e9c32ca9840a87af771c02de3e2760b4095d'
+
+# REST
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'PAGE_SIZE': 100,
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+}

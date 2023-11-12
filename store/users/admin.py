@@ -1,7 +1,16 @@
 from django.contrib import admin
-from users.models import User
+
 from products.admin import BasketAdminInLine
+from users.models import EmailVerification, User
+
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
     inlines = (BasketAdminInLine,)
+
+@admin.register(EmailVerification)
+class EmailVerificationAdmin(admin.ModelAdmin):
+    list_display = ('code', 'user', 'expiration')
+    fields = ('code', 'user', 'expiration', 'created')
+    readonly_fields = ('created',)
+

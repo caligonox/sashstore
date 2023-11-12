@@ -1,48 +1,48 @@
-from django.shortcuts import render, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
+from django.core.cache import cache
+from django.shortcuts import HttpResponseRedirect
 from django.views.generic.base import TemplateView
-from django.core.paginator import Paginator
-from products.models import ProductCategory, Product, Basket
+from django.views.generic.list import ListView
 
-#class IndexView(TemplateView):
-#     pass
+from common.views import TitleMixin
+from products.models import Basket, Product, ProductCategory
 
-def index(request):
-     context = {
-          'title': 'store',
-     }
-     return render(request, 'products/index.html', context)
 
-def products(request, category_id=None, page=1):
-     context = {'title': 'Store - Каталог', 'categorys': ProductCategory.objects.all(), 'products': Product.objects.all()}
-     if category_id:
-          products = Product.objects.filter(category_id=category_id)
-     else:
-          products = Product.objects.all() #context.update({'products': Product.objects.all()})
-     paginator = Paginator(products, 3)
-     products_paginator = paginator.page(page)
-     context.update({'products': products_paginator})
-     return render(request, 'products/products.html', context)
+class IndexView(TitleMixin, TemplateView):
+    template_name = 'products/index.html'
+    title = f'{TitleMixin.store_name} - Главная страница'
 
-@login_required
-def basket_add(request, product_id ):
-     current_page = request.META.get('HTTP_REFERER')
-     product = Product.objects.get(id=product_id)
-     baskets = Basket.objects.filter(user=request.user, product=product)
 
-     if not baskets.exists():
-          Basket.objects.create(user=request.user, product=product, quantity=1)
-          return HttpResponseRedirect(current_page)
-     else:
-          basket = baskets.first()
-          basket.quantity += 1
-          basket.save()
-          return HttpResponseRedirect(current_page)
+class ProductsListView(TitleMixin, ListView):
+    model = Product
+    template_name = 'products/products.html'
+    paginate_by = 3
+    title = f'{TitleMixin.store_name} - Каталог'
+
+    def get_queryset(self):
+        queryset = super(ProductsListView, self).get_queryset()
+        category_id = self.kwargs.get('category_id')  # not none
+        return queryset.filter(category_id=category_id) if category_id else queryset  # none
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super(ProductsListView, self).get_context_data()
+        categorys = cache.get('categorys')
+        if not categorys:
+            context['categorys'] = ProductCategory.objects.all()
+            cache.set('categorys', context['categorys'], 30)
+        else:
+            context['categorys'] = categorys
+        return context
+
 
 @login_required
-def basket_delete(request, id):
-     basket = Basket.objects.get(id=id)
-     basket.delete()
-     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
-        
+def basket_add(request, product_id):
+    Basket.create_or_update(product_id=product_id, user=request.user)
+    return HttpResponseRedirect(request.META['HTTP_REFERER'])
 
+
+@login_required
+def basket_remove(request, basket_id):
+    basket = Basket.objects.get(id=basket_id)
+    basket.delete()
+    return HttpResponseRedirect(request.META['HTTP_REFERER'])
