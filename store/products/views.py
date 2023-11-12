@@ -21,23 +21,18 @@ class ProductsListView(TitleMixin, ListView):
 
     def get_queryset(self):
         queryset = super(ProductsListView, self).get_queryset()
-        category_id = self.kwargs.get('category_id')  # not none
-        return queryset.filter(category_id=category_id) if category_id else queryset  # none
+        category_id = self.kwargs.get('category_id')
+        return queryset.filter(category_id=category_id) if category_id else queryset
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super(ProductsListView, self).get_context_data()
-        categorys = cache.get('categorys')
-        if not categorys:
-            context['categorys'] = ProductCategory.objects.all()
-            cache.set('categorys', context['categorys'], 30)
-        else:
-            context['categorys'] = categorys
+        context['categories'] = ProductCategory.objects.all()
         return context
 
 
 @login_required
 def basket_add(request, product_id):
-    Basket.create_or_update(product_id=product_id, user=request.user)
+    Basket.create_or_update(product_id, request.user)
     return HttpResponseRedirect(request.META['HTTP_REFERER'])
 
 
