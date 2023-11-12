@@ -4,17 +4,17 @@ The project of a small marketplace
 
 #### Stack:
 
+##### Frontend
+
+- [JavaScript](https://nodejs.org/en/download/)
+- [CSS](https://ru.wikipedia.org/wiki/CSS/)
+- [HTML](https://ru.wikipedia.org/wiki/HTML/)
+
 ##### Backend
 
 - [Python](https://www.python.org/downloads/)
 - [PostgreSQL](https://www.postgresql.org/)
 - [Redis](https://redis.io/)
-
-###### Frontend
-
-- [JavaScript](https://nodejs.org/en/download/)
-- [CSS](https://ru.wikipedia.org/wiki/CSS/)
-- [HTML](https://ru.wikipedia.org/wiki/HTML/)
 
 ## Local Developing
 
@@ -23,7 +23,7 @@ All actions should be executed from the source directory of the project and only
 1. Firstly, create and activate a new virtual environment:
    ```bash
    python3.11 -m venv ../venv
-   ../venv/bin/activate
+   source ../venv/bin/activate
    ```
 2. Install packages:
    ```bash
