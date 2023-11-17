@@ -15,7 +15,8 @@ class ProductModelViewSet(ModelViewSet):
         if self.action in ('create', 'update', 'destroy'):
             self.permission_classes = (IsAdminUser,)
         return super(ProductModelViewSet, self).get_permissions()
-    
+
+
 class BasketModelViewSet(ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = BasketSerializer
@@ -25,7 +26,7 @@ class BasketModelViewSet(ModelViewSet):
     def get_queryset(self):
         queryset = super(BasketModelViewSet, self).get_queryset()
         return queryset.filter(user=self.request.user)
-    
+
     def create(self, request, *args, **kwargs):
         try:
             product_id = request.data['product_id']

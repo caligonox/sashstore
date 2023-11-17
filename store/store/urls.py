@@ -6,7 +6,6 @@ from rest_framework.authtoken.views import obtain_auth_token
 
 from orders.views import stripe_webhook_view
 from products.views import IndexView
-from users.views import PasswordResetView, PasswordResetConfirmView
 
 urlpatterns = [
     path('admin/', admin.site.urls),

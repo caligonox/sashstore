@@ -1,14 +1,10 @@
 from django import forms
 from django.conf import settings
-from django.contrib.auth.forms import (
-    AuthenticationForm,
-    UserChangeForm,
-    UserCreationForm,
-    PasswordResetForm
-)
+from django.contrib.auth.forms import (AuthenticationForm, PasswordResetForm,
+                                       UserChangeForm, UserCreationForm)
 from django.contrib.auth.tokens import default_token_generator
 
-from users.models import User, EmailVerification
+from users.models import EmailVerification, User
 from users.tasks import sent_email_verification
 
 

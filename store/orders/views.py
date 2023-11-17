@@ -17,45 +17,49 @@ from products.models import Basket
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
+
 class SuccessTemplateView(TitleMixin, TemplateView):
-    template_name = 'orders/success.html'
-    title = 'Store - Спасибо за заказ!'
+    template_name = 'orders/order_success.html'
+    title = f'{TitleMixin.store_name} - Спасибо за заказ!'
+
 
 class CancelledTemplateView(TemplateView):
-    template_name = 'orders/cancelled.html'
+    template_name = 'orders/order_cancelled.html'
+
 
 class OrderListView(TitleMixin, ListView):
-   template_name = 'orders/orders.html'
-   title = 'Store - Заказы'
-   queryset = Order.objects.all()
-   ordering = ('-id')
+    template_name = 'orders/order_list.html'
+    title = f'{TitleMixin.store_name} - Заказы'
+    queryset = Order.objects.all()
+    ordering = ('-created')
 
-   def get_queryset(self):
-      queryset = super(OrderListView, self).get_queryset()
-      return queryset.filter(initiator=self.request.user)
+    def get_queryset(self):
+        queryset = super(OrderListView, self).get_queryset()
+        return queryset.filter(initiator=self.request.user)
 
-class OrderDetailView(DetailView):
-   template_name = 'orders/order.html'
-   model = Order
 
-   def get_context_data(self, **kwargs):
-      context = super(OrderDetailView, self).get_context_data(**kwargs)
-      context['title'] = f'Store заказ #{self.object.id}'
-      return context
+class OrderDetailView(TitleMixin, DetailView):
+    template_name = 'orders/order_details.html'
+    model = Order
+
+    def get_context_data(self, **kwargs):
+        context = super(OrderDetailView, self).get_context_data(**kwargs)
+        context['title'] = f'{TitleMixin.store_name} заказ #{self.object.id}'
+        return context
+
 
 class OrderCreateView(TitleMixin, CreateView):
-    template_name = 'orders/create.html'
+    template_name = 'orders/order_create.html'
     form_class = OrderForm
     success_url = reverse_lazy('orders:order_create')
-    title = 'Store - Оформление заказа'
+    title = f'{TitleMixin.store_name} - Оформление заказа'
 
     def post(self, request, *args, **kwargs):
         super(OrderCreateView, self).post(request, *args, **kwargs)
         baskets = Basket.objects.filter(user=self.request.user)
-
         checkout_session = stripe.checkout.Session.create(
-            line_items = baskets.stripe_products(),
-            metadata = {'order_id': self.object.id},
+            line_items=baskets.stripe_products(),
+            metadata={'order_id': self.object.id},
             mode='payment',
             success_url='{}{}'.format(settings.DOMAIN_NAME, reverse('orders:order_success')),
             cancel_url='{}{}'.format(settings.DOMAIN_NAME, reverse('orders:order_cancelled')),
@@ -65,7 +69,8 @@ class OrderCreateView(TitleMixin, CreateView):
     def form_valid(self, form):
         form.instance.initiator = self.request.user
         return super(OrderCreateView, self).form_valid(form)
-    
+
+
 @csrf_exempt
 def stripe_webhook_view(request):
     payload = request.body
@@ -73,24 +78,19 @@ def stripe_webhook_view(request):
     event = None
 
     try:
-      event = stripe.Webhook.construct_event(
-        payload, sig_header, settings.STRIPE_WEBHOOK_SECRET
-      )
+        event = stripe.Webhook.construct_event(
+            payload, sig_header, settings.STRIPE_WEBHOOK_SECRET
+        )
     except ValueError:
-      return HttpResponse(status=400)
+        return HttpResponse(status=400)
     except stripe.error.SignatureVerificationError:
-      return HttpResponse(status=400)
+        return HttpResponse(status=400)
 
     if event['type'] == 'checkout.session.completed':
-      session = stripe.checkout.Session.retrieve(
-        event['data']['object']['id'],
-        expand=['line_items'],
-      )
-
-      line_items = session.line_items
-      fulfill_order(line_items)
-
+        session = event['data']['object']
+        fulfill_order(session)
     return HttpResponse(status=200)
+
 
 def fulfill_order(session):
     order_id = int(session.metadata.order_id)

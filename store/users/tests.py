@@ -6,7 +6,7 @@ from django.test import TestCase
 from django.urls import reverse
 from django.utils.timezone import now
 
-from users.forms import EmailVerification, UserRegistrationForm
+from users.forms import EmailVerification
 from users.models import User
 
 if __name__ == '__main__':
