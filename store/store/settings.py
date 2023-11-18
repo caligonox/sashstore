@@ -12,19 +12,46 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 
 from pathlib import Path
 
-# import environ
+import environ
+
+env = environ.Env(
+    DEBUG=(bool),
+    SECRET_KEY=(str),
+    DOMAIN_NAME=(str),
+
+    REDIS_HOST=(str),
+    REDIS_PORT=(str),
+
+    DATABASE_NAME=(str),
+    DATABASE_USER=(str),
+    DATABASE_PASSWORD=(str),
+    DATABASE_HOST=(str),
+    DATABASE_PORT=(str),
+
+    EMAIL_HOST=(str),
+    EMAIL_PORT=(int),
+    EMAIL_HOST_USER=(str),
+    EMAIL_HOST_PASSWORD=(str),
+
+    STRIPE_PUBLIC_KEY=(str),
+    STRIPE_SECRET_KEY=(str),
+    STRIPE_WEBHOOK_SECRET=(str),
+)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Env
+environ.Env.read_env(BASE_DIR / 'configuration\.env')
+
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-&-a1s9d-^np%##4q_izpd$xn36#9)-nsadb43ia(n%p04x)zq!'
+SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env('DEBUG')
 
 ALLOWED_HOSTS = ['*']
-DOMAIN_NAME = 'http://127.0.0.1:8000'
+DOMAIN_NAME = env('DOMAIN_NAME')
 
 INSTALLED_APPS = [
     # global apps
@@ -92,11 +119,11 @@ TEMPLATES = [
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'Store',
-        'USER': 'store_admin',
-        'PASSWORD': '58523gfj',
-        'HOST': 'localhost',
-        'PORT': '5432',
+        'NAME': env('DATABASE_NAME'),
+        'USER': env('DATABASE_USER'),
+        'PASSWORD': env('DATABASE_PASSWORD'),
+        'HOST': env('DATABASE_HOST'),
+        'PORT': env('DATABASE_PORT'),
     },
 }
 
@@ -124,18 +151,18 @@ INTERNAL_IPS = ['127.0.0.1', 'localhost',]
 CACHES = {
     "default": {
         "BACKEND": "django.core.cache.backends.redis.RedisCache",
-        "LOCATION": "redis://127.0.0.1:6379",
+        "LOCATION": f"redis://{env('REDIS_HOST')}:{env('REDIS_PORT')}",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
     }
 }
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
 LANGUAGE_CODE = 'en-ru'
-
 TIME_ZONE = 'Europe/Moscow'
-
 USE_I18N = True
-
 USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
@@ -163,10 +190,10 @@ LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 
 # Sending emails
-EMAIL_HOST = 'smtp.yandex.ru'
-EMAIL_PORT = 465
-EMAIL_HOST_USER = 'storeserverlogin@yandex.ru'
-EMAIL_HOST_PASSWORD = 'zpphkhaynjohwcfr'
+EMAIL_HOST = env('EMAIL_HOST')
+EMAIL_PORT = env('EMAIL_PORT')
+EMAIL_HOST_USER = env('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
 EMAIL_USE_SSL = True
 EMAIL_SERVER = EMAIL_HOST_USER
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
@@ -178,9 +205,6 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
-
-SITE_ID = 3
-
 SOCIALACCOUNT_PROVIDERS = {
     'github': {
         'SCOPE': [
@@ -188,15 +212,16 @@ SOCIALACCOUNT_PROVIDERS = {
         ],
     }
 }
+SITE_ID = 3
 
 # Celery
-CELERY_BROKER_URL = 'redis://127.0.0.1:6379'
-CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379'
+CELERY_BROKER_URL = f"redis://{env('REDIS_HOST')}:{env('REDIS_PORT')}"
+CELERY_RESULT_BACKEND = f"redis://{env('REDIS_HOST')}:{env('REDIS_PORT')}"
 
 # Payment
-STRIPE_PUBLIC_KEY = 'pk_test_51O84rIHCu8e3Xef9RJh1Snc9JKDCNAmcOZW3kWAJZjuuFE6H6BDDxenlm2hiHcGdTxIT5RwlagBXIjcKcCLhMQFW00RUoKeZ2v'
-STRIPE_SECRET_KEY = 'sk_test_51O84rIHCu8e3Xef9W84EAO4dowbLbuYqUnF2WJLX3IVFnblUuoXfcvwaBlplXOEaz57m20mxKc6Nne7h08WF7aLl00LnaoN2oS'
-STRIPE_WEBHOOK_SECRET = 'whsec_524c9d01c4f19e91910d414f9140e9c32ca9840a87af771c02de3e2760b4095d'
+STRIPE_PUBLIC_KEY = env('STRIPE_PUBLIC_KEY')
+STRIPE_SECRET_KEY = env('STRIPE_SECRET_KEY')
+STRIPE_WEBHOOK_SECRET = env('STRIPE_WEBHOOK_SECRET')
 
 # REST
 REST_FRAMEWORK = {
