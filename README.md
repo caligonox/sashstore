@@ -12,7 +12,7 @@ The project of a small marketplace
 
 ##### Backend
 
-- [Python](https://www.python.org/downloads/)
+- [Django](https://www.djangoproject.com/)
 - [PostgreSQL](https://www.postgresql.org/)
 - [Redis](https://redis.io/)
 
