@@ -1,6 +1,6 @@
 # Store Sash
 
-The project of a small marketplace
+The project of a small marketplace specialized in the sale of clothing
 
 #### Stack:
 
