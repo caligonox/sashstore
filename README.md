@@ -1,4 +1,4 @@
-### Store Sash
+## Store Sash
 
 The project of a small marketplace specialized in the sale of clothing
 
@@ -17,7 +17,7 @@ The project of a small marketplace specialized in the sale of clothing
 - [PostgreSQL](https://www.postgresql.org/)
 - [Redis](https://redis.io/)
 
-## Local Developing
+### Local Developing
 
 All actions should be executed from the source directory of the project and only after installing all requirements.
 
