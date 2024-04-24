@@ -2,15 +2,15 @@
 
 The project of a small marketplace specialized in the sale of clothing
 
-#### Stack:
+### Stack:
 
-##### Frontend
+#### Frontend
 
 - [JavaScript](https://nodejs.org/en/download/)
 - [CSS](https://ru.wikipedia.org/wiki/CSS/)
 - [HTML](https://ru.wikipedia.org/wiki/HTML/)
 
-##### Backend
+#### Backend
 
 - [Python](https://www.python.org/)
 - [Django](https://www.djangoproject.com/)
