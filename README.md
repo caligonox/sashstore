@@ -12,6 +12,7 @@ The project of a small marketplace specialized in the sale of clothing
 
 ##### Backend
 
+- [Python](https://www.python.org/)
 - [Django](https://www.djangoproject.com/)
 - [PostgreSQL](https://www.postgresql.org/)
 - [Redis](https://redis.io/)
@@ -30,13 +31,13 @@ All actions should be executed from the source directory of the project and only
    pip install --upgrade pip
    pip install -r requirements.txt
    ```
-3. Run project dependencies, migrations, fill the database with the fixture data etc.:
+3. Run project dependencies, migrations, fill the database with the fixture data etc:
    ```bash
    ./manage.py migrate
    ./manage.py loaddata <path_to_fixture_files>
    ./manage.py runserver
    ```
-4. Run [Redis Server](https://redis.io/docs/getting-started/installation/):
+4. Run Redis Server:
    ```bash
    redis-server
    ```
