@@ -1,4 +1,4 @@
-# Store Sash
+### Store Sash
 
 The project of a small marketplace specialized in the sale of clothing
 
@@ -33,9 +33,9 @@ All actions should be executed from the source directory of the project and only
    ```
 3. Run project dependencies, migrations, fill the database with the fixture data etc:
    ```bash
-   ./manage.py migrate
-   ./manage.py loaddata <path_to_fixture_files>
-   ./manage.py runserver
+   python manage.py migrate
+   python manage.py loaddata <path_to_fixture_files>
+   python manage.py runserver
    ```
 4. Run Redis Server:
    ```bash
