@@ -1,22 +1,23 @@
-# Store Sash
+# sashstore
 
-The project of a small marketplace
+The project of a small marketplace specialized in the sale of clothing
 
-#### Stack:
+### Stack:
 
-##### Frontend
+#### Frontend
 
 - [JavaScript](https://nodejs.org/en/download/)
 - [CSS](https://ru.wikipedia.org/wiki/CSS/)
 - [HTML](https://ru.wikipedia.org/wiki/HTML/)
 
-##### Backend
+#### Backend
 
-- [Python](https://www.python.org/downloads/)
+- [Python](https://www.python.org/)
+- [Django](https://www.djangoproject.com/)
 - [PostgreSQL](https://www.postgresql.org/)
 - [Redis](https://redis.io/)
 
-## Local Developing
+### Local Developing
 
 All actions should be executed from the source directory of the project and only after installing all requirements.
 
@@ -27,16 +28,16 @@ All actions should be executed from the source directory of the project and only
    ```
 2. Install packages:
    ```bash
-   pip install --upgrade pip
-   pip install -r requirements.txt
+   poetry install
+   poetry update
    ```
-3. Run project dependencies, migrations, fill the database with the fixture data etc.:
+3. Run project dependencies, migrations, fill the database with the fixture data etc:
    ```bash
-   ./manage.py migrate
-   ./manage.py loaddata <path_to_fixture_files>
-   ./manage.py runserver
+   python manage.py migrate
+   python manage.py loaddata <path_to_fixture_files>
+   python manage.py runserver
    ```
-4. Run [Redis Server](https://redis.io/docs/getting-started/installation/):
+4. Run Redis Server:
    ```bash
    redis-server
    ```
