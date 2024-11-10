@@ -1,4 +1,4 @@
-## Store Sash
+# sashstore
 
 The project of a small marketplace specialized in the sale of clothing
 
