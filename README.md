@@ -27,8 +27,8 @@ All actions should be executed from the source directory of the project and only
    ```
 2. Install packages:
    ```bash
-   pip install --upgrade pip
-   pip install -r requirements.txt
+   poetry install
+   poetry update
    ```
 3. Run project dependencies, migrations, fill the database with the fixture data etc.:
    ```bash

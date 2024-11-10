@@ -1,3 +1,0 @@
-[flake8]
-exclude = migrations
-max_line_length = 150

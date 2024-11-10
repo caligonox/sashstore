@@ -1,0 +1,30 @@
+[tool.poetry]
+name = "sashstore"
+version = "0.0.1"
+description = "marketplace"
+authors = ["Daniel Kotelnikov <Danielkotelnikov20@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11.4"
+django = "^4.0"
+celery = "^5.4.0"
+stripe = "^11.2.0"
+environ = "^1.0"
+ruff = "^0.7.3"
+
+[tool.ruff]
+line-length = 79
+show-fixes = true
+src = ["src"]
+select = [
+    "E",
+    "F",
+    "D",
+    "UP",
+]
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
