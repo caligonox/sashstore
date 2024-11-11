@@ -15,13 +15,16 @@ environ = "^1.0"
 ruff = "^0.7.3"
 
 [tool.ruff]
-line-length = 79
+line-length = 80
 show-fixes = true
 src = ["src"]
 select = [
     "E",
+    "W",
     "F",
+    "N",
     "D",
+    "I",
     "UP",
 ]
 
